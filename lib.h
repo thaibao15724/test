@@ -6,8 +6,10 @@ using namespace std;
 class students
 {
 private:
-    string *names;
-    float *scores;
+    class student;
+
+private:
+    student *studentList;
     int count;
     int capacity;
 
@@ -19,6 +21,23 @@ public:
     void removeStudent(string);
     void display();
     void bestStudent();
+
+private:
+    class student
+    {
+    private:
+        string name;
+        float score;
+        friend class students;
+
+    public:
+        student() {}
+        student(string name, float score)
+        {
+            this->name = name;
+            this->score = score;
+        }
+    };
 };
 
 void run(students *);

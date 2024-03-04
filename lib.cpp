@@ -6,14 +6,12 @@ students::students()
 {
     this->count = 0;
     this->capacity = 10;
-    this->names = new string[capacity];
-    this->scores = new float[capacity];
+    this->studentList = new student[capacity];
 }
 
 students::~students()
 {
-    delete[] names;
-    delete[] scores;
+    delete[] studentList;
 }
 
 void students::ensureCapacity(int n)
@@ -21,31 +19,27 @@ void students::ensureCapacity(int n)
     if (n <= capacity)
         return;
     capacity = capacity * 3 / 2;
-    string *new_names = new string[capacity];
-    float *new_scores = new float[capacity];
+    student *new_studentList = new student[capacity];
     for (int i = 0; i < count; ++i)
     {
-        new_names[i] = names[i];
-        new_scores[i] = scores[i];
+        new_studentList[i] = studentList[i];
     }
-    delete[] names;
-    delete[] scores;
-    this->names = new_names;
-    this->scores = new_scores;
+    delete[] studentList;
+    this->studentList = new_studentList;
 }
 
 void students::addStudent(string name, float score)
 {
     ensureCapacity(this->count + 1);
-    this->names[this->count++] = name;
-    this->scores[this->count - 1] = score;
+    student tmp(name, score);
+    this->studentList[this->count++] = tmp;
 }
 
 void students::display()
 {
     for (int i = 0; i < this->count; ++i)
     {
-        cout << this->names[i] << " " << this->scores[i] << '\n';
+        cout << this->studentList[i].name << " " << this->studentList[i].score << '\n';
     }
 }
 
@@ -54,12 +48,12 @@ void students::removeStudent(string name)
     bool ok = true;
     for (int i = 0; i < this->count; ++i)
     {
-        if (name == names[i])
+        if (name == studentList[i].name)
         {
             this->count--;
             for (int j = i; j < this->count; ++j)
             {
-                names[j] = names[j + 1];
+                studentList[j].name = studentList[j + 1].name;
             }
             ok = false;
             break;
@@ -71,16 +65,16 @@ void students::removeStudent(string name)
 
 void students::bestStudent()
 {
-    float max = scores[0];
+    float max = studentList[0].score;
     for (int i = 1; i < count; ++i)
     {
-        if (scores[i] > max)
-            max = scores[i];
+        if (studentList[i].score > max)
+            max = studentList[i].score;
     }
     for (int i = 0; i < count; ++i)
     {
-        if (scores[i] == max)
-            cout << names[i] << " " << scores[i] << '\n';
+        if (studentList[i].score == max)
+            cout << studentList[i].name << " " << studentList[i].score << '\n';
     }
 }
 
@@ -91,8 +85,8 @@ void run(students *stu)
         string s;
         cout << "1. Add a new student\n";
         cout << "2. Display the list of all students and their scores\n";
-        // cout << "3. Remove a student\n";
         cout << "3. Display the best student(s)'s\n";
+        cout << "4. Remove a student\n";
         cout << "0. Exit the program\n";
         cout << "Choose the above functionalities: ";
         cin >> s;
@@ -115,16 +109,16 @@ void run(students *stu)
         }
         else if (s == "2")
             stu->display();
-        // else if (s == "3")
-        // {
-        //     string name;
-        //     cout << "Student name: ";
-        //     cin.ignore();
-        //     getline(cin, name);
-        //     stu->removeStudent(name);
-        // }
         else if (s == "3")
             stu->bestStudent();
+        else if (s == "4")
+        {
+            string name;
+            cout << "Student name: ";
+            cin.ignore();
+            getline(cin, name);
+            stu->removeStudent(name);
+        }
         else
             break;
     }
